@@ -1,5 +1,10 @@
 package com.swiftmart.swmartproductserv.models;
 
+import lombok.Getter;
+import lombok.Setter;
+
+@Getter
+@Setter
 public class Product {
     private Long id;
     private String title;
