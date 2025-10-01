@@ -24,7 +24,8 @@ public class ProductController {
         List<Product> products = productService.getAllProducts();
 
         List<ProductResponseDto> productResponseDtos =
-                products.stream().map(ProductResponseDto::from)
+                products.stream().filter(product -> product.getId() != null)
+                        .map(ProductResponseDto::from)
                         .collect(Collectors.toList());
 
         return productResponseDtos;

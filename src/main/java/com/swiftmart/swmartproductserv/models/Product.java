@@ -1,10 +1,12 @@
 package com.swiftmart.swmartproductserv.models;
 
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
 
 @Getter
 @Setter
+@AllArgsConstructor
 public class Product {
     private Long id;
     private String name;
@@ -12,5 +14,4 @@ public class Product {
     private Double price;
     private Category category;
     private String imageUrl;
-
 }
