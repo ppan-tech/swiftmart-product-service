@@ -4,6 +4,7 @@ import com.swiftmart.swmartproductserv.dtos.ProductResponseDto;
 import com.swiftmart.swmartproductserv.models.Product;
 import com.swiftmart.swmartproductserv.services.ProductService;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.ArrayList;
@@ -11,6 +12,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @RestController
+@RequestMapping("/api/swiftmart-products/v1")
 public class ProductController {
     private ProductService productService;
 
