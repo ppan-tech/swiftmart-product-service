@@ -1,12 +1,12 @@
 package com.swiftmart.swmartproductserv.controllers;
 
+import com.swiftmart.swmartproductserv.dtos.ClientReqFakeStoreProductRequestDto;
 import com.swiftmart.swmartproductserv.dtos.ProductResponseDto;
 import com.swiftmart.swmartproductserv.models.Product;
 import com.swiftmart.swmartproductserv.services.ProductService;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -37,6 +37,21 @@ public class ProductController {
     @GetMapping("/products/{id}")
     Product getSingleProduct(@PathVariable("id") Long id){
         return productService.getProductById(id);
+    }
+
+    @PostMapping("/products")
+    public ResponseEntity<ProductResponseDto> createProduct(
+            @RequestBody ClientReqFakeStoreProductRequestDto
+                    clientReqFakeStoreProductRequestDto)
+    {
+        Product product = productService.createProduct(
+                clientReqFakeStoreProductRequestDto.getName(),
+                clientReqFakeStoreProductRequestDto.getDescription(),
+                clientReqFakeStoreProductRequestDto.getPrice(),
+                clientReqFakeStoreProductRequestDto.getImageUrl(),
+                clientReqFakeStoreProductRequestDto.getCategory()
+        );
+        return new ResponseEntity<>(ProductResponseDto.from(product), HttpStatus.CREATED);
     }
 
 }

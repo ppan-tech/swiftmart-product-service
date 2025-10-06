@@ -1,6 +1,7 @@
 package com.swiftmart.swmartproductserv.services;
 
-import com.swiftmart.swmartproductserv.dtos.FakeStoreProductDTO;
+import com.swiftmart.swmartproductserv.dtos.FakeStoreRequestDto;
+import com.swiftmart.swmartproductserv.dtos.FakeStoreResponseDto;
 import com.swiftmart.swmartproductserv.exceptions.ProductNotFoundException;
 import com.swiftmart.swmartproductserv.models.Category;
 import com.swiftmart.swmartproductserv.models.Product;
@@ -27,9 +28,9 @@ public class FakeStoreProductServiceImpl implements ProductService {
 
     @Override
     public Product getProductById(Long id) {
-        FakeStoreProductDTO response = restTemplate.getForObject(
+        FakeStoreResponseDto response = restTemplate.getForObject(
                 baseUrl + "/products/" + id,
-                FakeStoreProductDTO.class);
+                FakeStoreResponseDto.class);
 
         if(response == null){
             throw new ProductNotFoundException("Product with id " + id + " not found");
@@ -52,21 +53,40 @@ public class FakeStoreProductServiceImpl implements ProductService {
     public List<Product> getAllProducts() {
         //https://fakestoreapi.com/products
 
-        FakeStoreProductDTO[] fakeStoreProductDTOS = restTemplate.getForObject(
+        FakeStoreResponseDto[] fakeStoreProductDTOS = restTemplate.getForObject(
                 baseUrl + "/products",
-                FakeStoreProductDTO[].class);
+                FakeStoreResponseDto[].class);
 
         List<Product> products = new ArrayList<>();
 
-        for(FakeStoreProductDTO fakeStoreProductDTO: fakeStoreProductDTOS){
+        for(FakeStoreResponseDto fakeStoreProductDTO: fakeStoreProductDTOS){
             products.add(fakeStoreProductDTO.toProduct());
         }
         return products;
     }
 
     @Override
-    public Product createProduct(Product product) {
-        return null;
+    public Product createProduct(String name, String description, double price, String imageUrl, String category)
+    {
+        FakeStoreRequestDto fakeStoreRequestDto = createDtoFromParams(name, description, price, imageUrl, category);
+
+        FakeStoreResponseDto fakeStoreResponseDto = restTemplate.postForObject(
+                baseUrl + "/products",
+                fakeStoreRequestDto,
+                FakeStoreResponseDto.class);
+
+        return fakeStoreResponseDto.toProduct();
+    }
+
+    private FakeStoreRequestDto createDtoFromParams(String name, String description, double price, String imageUrl, String category)
+    {
+        FakeStoreRequestDto fakeStoreRequestDto = new FakeStoreRequestDto();
+        fakeStoreRequestDto.setTitle(name);
+        fakeStoreRequestDto.setDescription(description);
+        fakeStoreRequestDto.setPrice(price);
+        fakeStoreRequestDto.setImage(imageUrl);
+        fakeStoreRequestDto.setCategory(category);
+        return fakeStoreRequestDto;
     }
 
     @Override
