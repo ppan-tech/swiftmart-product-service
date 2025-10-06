@@ -4,6 +4,7 @@ import com.swiftmart.swmartproductserv.dtos.ProductResponseDto;
 import com.swiftmart.swmartproductserv.models.Product;
 import com.swiftmart.swmartproductserv.services.ProductService;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -31,6 +32,11 @@ public class ProductController {
                         .collect(Collectors.toList());
 
         return productResponseDtos;
+    }
+
+    @GetMapping("/products/{id}")
+    Product getSingleProduct(@PathVariable("id") Long id){
+        return productService.getProductById(id);
     }
 
 }

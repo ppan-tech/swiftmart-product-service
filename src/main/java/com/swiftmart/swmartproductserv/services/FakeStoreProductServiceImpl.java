@@ -1,6 +1,7 @@
 package com.swiftmart.swmartproductserv.services;
 
 import com.swiftmart.swmartproductserv.dtos.FakeStoreProductDTO;
+import com.swiftmart.swmartproductserv.exceptions.ProductNotFoundException;
 import com.swiftmart.swmartproductserv.models.Category;
 import com.swiftmart.swmartproductserv.models.Product;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,7 +27,15 @@ public class FakeStoreProductServiceImpl implements ProductService {
 
     @Override
     public Product getProductById(Long id) {
-        return null;
+        FakeStoreProductDTO response = restTemplate.getForObject(
+                baseUrl + "/products/" + id,
+                FakeStoreProductDTO.class);
+
+        if(response == null){
+            throw new ProductNotFoundException("Product with id " + id + " not found");
+        }
+
+        return response.toProduct();
     }
 
     //Initial Testing purpose:
