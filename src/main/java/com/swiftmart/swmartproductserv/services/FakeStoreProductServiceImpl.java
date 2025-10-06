@@ -3,13 +3,11 @@ package com.swiftmart.swmartproductserv.services;
 import com.swiftmart.swmartproductserv.dtos.FakeStoreRequestDto;
 import com.swiftmart.swmartproductserv.dtos.FakeStoreResponseDto;
 import com.swiftmart.swmartproductserv.exceptions.ProductNotFoundException;
-import com.swiftmart.swmartproductserv.models.Category;
 import com.swiftmart.swmartproductserv.models.Product;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
-import org.springframework.web.servlet.resource.ResourceUrlProvider;
+import org.springframework.http.*;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -89,9 +87,27 @@ public class FakeStoreProductServiceImpl implements ProductService {
         return fakeStoreRequestDto;
     }
 
+    //Will use here RestTemplate.exchange() method to send PUT request as its better as there could be many update combinations and can
+    //not have so many DTOs, which would be one for each combination.
+    //ref:https://www.baeldung.com/spring-rest-template-put
     @Override
     public Product updateProduct(long id, String name, String description, double price, String imageUrl, String category) {
-        return null;
+        FakeStoreRequestDto updatedFakeStoreRequestDto = createDtoFromParams(name, description, price, imageUrl, category);
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_JSON);
+
+        HttpEntity<FakeStoreRequestDto> requestEntity =
+                new HttpEntity<>(updatedFakeStoreRequestDto, headers);
+
+        ResponseEntity<FakeStoreResponseDto> responseEntity = restTemplate.exchange(
+                baseUrl+"/products/" + id,
+                HttpMethod.PUT,
+                requestEntity,
+                FakeStoreResponseDto.class
+        );
+
+        return responseEntity.getBody().toProduct();
     }
 
     @Override
