@@ -90,7 +90,7 @@ public class FakeStoreProductServiceImpl implements ProductService {
     }
 
     @Override
-    public Product updateProduct(Long id, Product product) {
+    public Product updateProduct(long id, String name, String description, double price, String imageUrl, String category) {
         return null;
     }
 

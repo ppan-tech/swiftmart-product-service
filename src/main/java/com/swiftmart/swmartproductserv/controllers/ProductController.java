@@ -55,4 +55,27 @@ public class ProductController {
         return new ResponseEntity<>(ProductResponseDto.from(product), HttpStatus.CREATED);
     }
 
+    //This idempotent method will either create a new product or update an existing product of with that id exists.
+    //If the product with the given id does not exist, it will create a new product
+    //with the given id and details from the request body.
+    //If the product with the given id exists, it will update the product
+    //with the details from the request body.
+    //In both cases, it will return the created or updated product details.
+    //Note : Here it is the client's responsibility to ensure that the id is unique.Unlike POST, which generates a new id for each request.
+    @PutMapping("/products/{id}")
+    public ProductResponseDto replaceProduct(@PathVariable("id") long id,
+                                             @RequestBody ClientReqFakeStoreProductRequestDto
+                                                     clientReqFakeStoreProductRequestDto)
+    {
+        Product product = productService.updateProduct(
+                id,
+                clientReqFakeStoreProductRequestDto.getName(),
+                clientReqFakeStoreProductRequestDto.getDescription(),
+                clientReqFakeStoreProductRequestDto.getPrice(),
+                clientReqFakeStoreProductRequestDto.getImageUrl(),
+                clientReqFakeStoreProductRequestDto.getCategory()
+        );
+
+        return ProductResponseDto.from(product);
+    }
 }
