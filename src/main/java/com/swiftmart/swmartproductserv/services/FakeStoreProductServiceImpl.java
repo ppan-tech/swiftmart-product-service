@@ -23,8 +23,8 @@ public class FakeStoreProductServiceImpl implements ProductService {
         Product p1 = new Product(1L, "Product 1", "Description 1", 10.0, new Category(1L,"Category 1"), "image1.jpg");
         Product p2 = new Product(2L, "Product 2", "Description 2", 20.0, new Category(2L,"Category 2"), "image2.jpg");
         Product p3 = new Product(3L, "Product 3", "Description 3", 30.0, new Category(3L,"Category 3"), "image3.jpg");
-        return null;
-        //return List.of(p1,p2,p3);
+        //return null;
+        return List.of(p1,p2,p3);
     }
 
     @Override
