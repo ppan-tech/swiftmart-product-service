@@ -1,7 +1,10 @@
 package com.swiftmart.swmartproductserv.advices;
 
+import com.swiftmart.swmartproductserv.dtos.ProductNotFoundErrorDTO;
+import com.swiftmart.swmartproductserv.exceptions.ProductNotFoundException;
 import org.springframework.http.HttpStatus;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
@@ -24,5 +27,14 @@ public class GlobalExceptionHandler {
         // Returns a clean, user-friendly error response
         return new ResponseEntity<>("An internal server error occurred due to missing data.",
                 HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+
+    @ExceptionHandler(ProductNotFoundException.class)
+    public ResponseEntity<ProductNotFoundErrorDTO> handleProductNotFoundException(ProductNotFoundException productNotFoundException){
+        //code to handle the exception & beatify the response
+        ProductNotFoundErrorDTO errorDTO = new ProductNotFoundErrorDTO();
+        errorDTO.setMessage(productNotFoundException.getMessage());
+
+        return new ResponseEntity<>(errorDTO, HttpStatusCode.valueOf(404));
     }
 }
