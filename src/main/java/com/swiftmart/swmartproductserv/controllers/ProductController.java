@@ -35,8 +35,9 @@ public class ProductController {
     }
 
     @GetMapping("/products/{id}")
-    Product getSingleProduct(@PathVariable("id") Long id){
-        return productService.getProductById(id);
+    ProductResponseDto getSingleProduct(@PathVariable("id") Long id){
+        Product product = productService.getProductById(id);
+        return ProductResponseDto.from(product);
     }
 
     @PostMapping("/products")
