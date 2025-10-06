@@ -1,4 +1,4 @@
-package com.swiftmart.swmartproductserv.exceptions;
+package com.swiftmart.swmartproductserv.advices;
 
 import org.springframework.http.HttpStatus;
 import lombok.extern.slf4j.Slf4j;
