@@ -61,6 +61,7 @@ public class ProductController {
     //If the product with the given id exists, it will update the product
     //with the details from the request body.
     //In both cases, it will return the created or updated product details.
+    //IMPORTANT:PUT replaces the entire resource, (so its idempotent as it's with the same id).
     //Note : Here it is the client's responsibility to ensure that the id is unique.Unlike POST, which generates a new id for each request.
     @PutMapping("/products/{id}")
     public ProductResponseDto replaceProduct(@PathVariable("id") long id,
