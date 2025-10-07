@@ -1,6 +1,8 @@
 package com.swiftmart.swmartproductserv.advices;
 
+import com.swiftmart.swmartproductserv.dtos.ErrorDto;
 import com.swiftmart.swmartproductserv.dtos.ProductNotFoundErrorDTO;
+import com.swiftmart.swmartproductserv.exceptions.OperationException;
 import com.swiftmart.swmartproductserv.exceptions.ProductNotFoundException;
 import org.springframework.http.HttpStatus;
 import lombok.extern.slf4j.Slf4j;
@@ -36,5 +38,13 @@ public class GlobalExceptionHandler {
         errorDTO.setMessage(productNotFoundException.getMessage());
 
         return new ResponseEntity<>(errorDTO, HttpStatusCode.valueOf(404));
+    }
+    @ExceptionHandler(OperationException.class)
+    public ResponseEntity<ErrorDto> handleOperationException(OperationException operationException){
+        //code to handle the exception & beatify the response
+        ErrorDto errorDTO = new ErrorDto();
+        errorDTO.setMessage(operationException.getMessage());
+
+        return new ResponseEntity<>(errorDTO, HttpStatusCode.valueOf(400));
     }
 }

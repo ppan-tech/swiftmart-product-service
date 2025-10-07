@@ -2,6 +2,7 @@ package com.swiftmart.swmartproductserv.services;
 
 import com.swiftmart.swmartproductserv.dtos.FakeStoreRequestDto;
 import com.swiftmart.swmartproductserv.dtos.FakeStoreResponseDto;
+import com.swiftmart.swmartproductserv.exceptions.OperationException;
 import com.swiftmart.swmartproductserv.exceptions.ProductNotFoundException;
 import com.swiftmart.swmartproductserv.models.Product;
 import org.springframework.beans.factory.annotation.Value;
@@ -9,8 +10,15 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.http.*;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.github.fge.jsonpatch.JsonPatch;
+import com.github.fge.jsonpatch.JsonPatchException;
+
 import java.util.ArrayList;
 import java.util.List;
+
 
 @Service("fakestoreproductservice")
 public class FakeStoreProductServiceImpl implements ProductService {
@@ -112,6 +120,38 @@ public class FakeStoreProductServiceImpl implements ProductService {
 
     @Override
     public void deleteProduct(Long id) {
-
+        try {
+            restTemplate.delete(baseUrl + "/products/" + id);
+        } catch (Exception e) {
+            throw new OperationException("Delete Operation failed for product-id: " + id + " with error"+e.getMessage());
+        }
     }
+
+    @Override
+    public Product applyPatchToProduct(long id, JsonPatch patch)
+            throws JsonPatchException,
+            JsonProcessingException {
+
+        // Get existing product
+        Product existingProduct = getProductById(id);
+
+        // Convert Product to JSON Format
+        ObjectMapper objectMapper = new ObjectMapper();
+        JsonNode productNode = objectMapper.valueToTree(existingProduct);
+
+        // Apply Patch
+        JsonNode patchedNode = patch.apply(productNode);
+
+        //Convert back to Product
+        Product patchedProduct = objectMapper.treeToValue(patchedNode, Product.class);
+
+        return updateProduct(id,
+                patchedProduct.getName(),
+                patchedProduct.getDescription(),
+                patchedProduct.getPrice(),
+                patchedProduct.getCategory().getName(),
+                patchedProduct.getImageUrl()
+        );
+    }
+
 }

@@ -8,6 +8,10 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.github.fge.jsonpatch.JsonPatch;
+import com.github.fge.jsonpatch.JsonPatchException;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -78,5 +82,52 @@ public class ProductController {
         );
 
         return ProductResponseDto.from(product);
+    }
+
+    //HTTP_PATCH  : Partial update of a resource.
+    //Unlike PUT, which replaces the entire resource, PATCH only modifies the specified fields of a resource.
+    //PATCH is not necessarily idempotent, as multiple identical PATCH requests may have different effects,
+    //depending on the current state of the resource.
+    //For example, if a PATCH request increments a counter field, multiple identical requests will result
+    //in different counter values.
+    //However, if a PATCH request sets a field to a specific value, multiple identical requests
+    //will have the same effect as a single request.
+    //So, whether PATCH is idempotent or not depends on the specific operation being performed.
+    //In general, PATCH is not considered idempotent, but it can be made idempotent by designing the operations carefully.
+
+
+    /*
+    * NOTES for configuring POSTMAN correctly
+    * URL: http://localhost:8080/products/4
+    * METHOD: PATCH
+    * Headers: "Content-Type: application/json-patch+json"
+    * BODY:
+    * [
+            {
+                "op": "replace",
+                "path": "/price",
+                "value": 0.99
+            }
+       ]
+    *
+    *
+    * */
+    @PatchMapping(
+            path = "/products/{id}",
+            consumes = "application/json-patch+json" // REQUIRED
+    )
+    public ProductResponseDto updateProduct(
+            @PathVariable("id") long id,
+            @RequestBody JsonPatch jsonPatch
+    ) throws JsonPatchException, JsonProcessingException
+    {
+        Product product = productService.applyPatchToProduct(id, jsonPatch);
+        return ProductResponseDto.from(product);
+    }
+
+    @DeleteMapping("/products/{id}")
+    public void deleteCategory(@PathVariable("id") Long productId) {
+        productService.deleteProduct(productId);
+
     }
 }
